@@ -1,50 +1,73 @@
-# Welcome to your Expo app 👋
+# 💞 UpLove — Relationship Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+UpLove is a TypeScript-based project that models the structure of a **relationship tracking app**.  
+It helps users reflect on their relationships through check-ins, commitments, and emotional events, combining both **daily tracking** and **weekly reviews**.
 
-## Get started
+---
 
-1. Install dependencies
+## 📘 Overview
 
-   ```bash
-   npm install
-   ```
+The system is built around the idea of **personal growth and relationship awareness**.  
+Each `Person` has `Relationships`, each relationship contains emotional `Pillars`, and users perform **UpLove check-ins** to track well-being, stress, and mood over time.
 
-2. Start the app
+Weekly check-ins also include **events** — positive or negative experiences that help evaluate relational progress.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 🧩 Core Concepts
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 🧠 Person
+Represents the main user or individual being tracked.  
+Each person has multiple **necessities** (needs) and one or more **relationships**.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 💞 Relationship
+Encapsulates one relationship, containing its **pillars**, **check-ins (UpLove)**, and related **events**.
 
-## Get a fresh project
+### 🏗 Pillar
+Defines the essential components of a healthy relationship (e.g., communication, trust, fun).  
+Each pillar has:
+- `priority` — how important it is.
+- `satisfaction` — how well it’s going.
 
-When you're ready, run:
+### 🕊 Necessity
+Represents a personal need or area of focus for the user.
 
-```bash
-npm run reset-project
-```
+### 🪷 UpLove
+An **abstract base class** for check-ins.  
+There are two main types:
+- `DailyUpLove` — short, lightweight check-ins for quick reflection.  
+- `WeeklyUpLove` — deeper reflections that include `Event` records.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Each UpLove tracks:
+- `stress` and `mood` (`Score` values from 1–5).  
+- `date` — when the check-in occurred.
 
-## Learn more
+### 📅 Event
+Represents a specific **positive or negative experience** within a relationship, used in weekly reviews.  
+Each event has a `sentiment` (`EventSentiment`), `description`, and `date`.
 
-To learn more about developing your project with Expo, look at the following resources:
+### 🧭 Commitment / ToDo / ToKeep
+Tracks actions to take or maintain:
+- `ToDo` — things to work on or improve.  
+- `ToKeep` — things to continue doing well.  
+Each `Commitment` has a `name`, `description`, `isDone` status, and an `id`.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🧱 Data Types
 
-Join our community of developers creating universal apps.
+The following types are referenced in the model (you’ll define them separately):
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```ts
+type Priority = ...;        // e.g., 1 | 2 | 3 | 4 | 5
+type Score = ...;           // e.g., 1 | 2 | 3 | 4 | 5
+type EventSentiment = ...;  // e.g., 'positive' | 'negative'
+
+---
+# Simple Class Diagram
+Person ──┬─> Necessity
+         └─> Relationship ──┬─> Pillar
+                             ├─> UpLove (abstract)
+                             │     ├─> DailyUpLove
+                             │     └─> WeeklyUpLove ──> Event
+                             └─> Commitment (ToDo / ToKeep)
