@@ -1,0 +1,39 @@
+#!/bin/bash
+# Pre-commit hook to detect malware signatures
+
+echo "🔍 Running security checks..."
+
+# Check for Shai-Hulud signatures
+if find . -name "setup_bun.js" -o -name "bun_environment.js" 2>/dev/null | grep -q .; then
+    echo "❌ ERROR: Malicious files detected (setup_bun.js or bun_environment.js)"
+    exit 1
+fi
+
+# Check for malicious patterns in code
+if grep -r "Sha1-Hulud\|Shai-Hulud\|The Second Coming" . --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null | grep -q .; then
+    echo "❌ ERROR: Malicious code patterns detected"
+    exit 1
+fi
+
+# Check for suspicious preinstall scripts in dependencies
+if grep -r '"preinstall"' node_modules/*/package.json 2>/dev/null | grep -v "node_modules/.bin" | grep -q .; then
+    echo "⚠️  WARNING: Packages with preinstall scripts detected"
+    echo "Review these packages carefully:"
+    grep -r '"preinstall"' node_modules/*/package.json 2>/dev/null | grep -v "node_modules/.bin"
+    read -p "Continue with commit? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
+# Run npm audit
+echo "🔒 Running npm audit..."
+if ! npm audit --audit-level=high; then
+    echo "❌ ERROR: High or critical vulnerabilities found"
+    echo "Run 'npm audit fix' to resolve issues"
+    exit 1
+fi
+
+echo "✅ Security checks passed"
+exit 0
