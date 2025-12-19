@@ -9,6 +9,8 @@ export default function RegisterLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.background },
         headerTintColor: theme.colors.primary,
+        contentStyle: { backgroundColor: theme.colors.background },
+        presentation: "card",
       }}
     >
       <Stack.Screen name="index" options={{ title: "UpLove" }} />

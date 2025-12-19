@@ -19,9 +19,11 @@ import usePeople from "@/src/hooks/database/usePeople";
 import useUpLove from "@/src/hooks/database/useUpLove";
 import PersonCard from "@/src/components/entity/PersonCard";
 import UpLoveCard from "@/src/components/entity/UpLoveCard";
+import { useRouter } from "expo-router";
 
 export default function HomePage() {
   const { colors } = useTheme();
+  const router = useRouter();
   const { getRelationshipMetadata, initializeRelationship } = useRelationship();
   const pillarsQuery = usePillars();
   const peopleQuery = usePeople();
@@ -127,7 +129,7 @@ export default function HomePage() {
       {/* Relationship Header */}
       <RelationshipHeader
         relationship={relationship}
-        onPress={() => console.log("Edit relationship")}
+        onPress={() => router.push("/relationship-settings")}
       />
 
       {/* Pillars Needing attention and strong */}
@@ -216,54 +218,6 @@ export default function HomePage() {
           </View>
         </>
       )}
-
-      {/* All People Overview */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <AppText text="People" variant="primary" typography="h2" />
-          <AppText
-            text={
-              people.length > 0
-                ? `${people.length} people in relationship`
-                : "No People added"
-            }
-            variant="secondary"
-            typography="caption"
-          />
-        </View>
-
-        {people.length > 0 ? (
-          // Render list of related people
-
-          people.map((person) => (
-            <PersonCard
-              key={person.id}
-              person={person}
-              variant="compact"
-              onPress={() => console.log("View person details: ", person.name)}
-            />
-          ))
-        ) : (
-          // Empty state when no people are linked
-
-          <View
-            style={[
-              styles.emptyCard,
-              {
-                backgroundColor: colors.surfaceMuted,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <AppText
-              text="Add people to your relationship to track their necessities"
-              variant="secondary"
-              typography="body"
-            />
-          </View>
-        )}
-        {}
-      </View>
 
       {/* Recent UpLoves */}
       <View style={styles.section}>

@@ -1,15 +1,17 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { useTheme } from "@/src/theme/ThemeContext";
-import { SPACING, BORDER_RADIUS, ICON_SIZE } from "@/src/theme/spacing";
+import { SPACING, BORDER_RADIUS, ICON_SIZE, TOUCH_TARGET } from "@/src/theme/spacing";
 import AppText from "../AppText";
 import Person from "@/src/entities/Person/Person";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { withOpacity } from "@/src/theme/theme";
 
 interface PersonCardProps {
   person: Person;
   onPress?: () => void;
+  onDelete?: () => void;
   showNecessitiesCount?: boolean;
   variant?: "default" | "compact";
 }
@@ -17,6 +19,7 @@ interface PersonCardProps {
 export default function PersonCard({
   person,
   onPress,
+  onDelete,
   showNecessitiesCount = true,
   variant = "default",
 }: PersonCardProps) {
@@ -26,6 +29,14 @@ export default function PersonCard({
     if (onPress) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       onPress();
+    }
+  };
+
+  const handleDelete = (e: any) => {
+    e.stopPropagation();
+    if (onDelete) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      onDelete();
     }
   };
 
@@ -81,10 +92,32 @@ export default function PersonCard({
         )}
       </View>
 
-      {/* Chevron indicator */}
-      {onPress && (
+      {/* Delete button or Chevron indicator */}
+      {onDelete ? (
+        <TouchableOpacity
+          onPress={handleDelete}
+          style={styles.deleteButton}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Delete person"
+        >
+          <View
+            style={[
+              styles.deleteButtonContainer,
+              { backgroundColor: withOpacity(colors.error, 0.15) },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="close-circle"
+              size={ICON_SIZE.sm}
+              color={colors.error}
+            />
+          </View>
+        </TouchableOpacity>
+      ) : onPress ? (
         <Feather name="chevron-right" size={24} color={colors.textSecondary} />
-      )}
+      ) : null}
     </View>
   );
 
@@ -153,5 +186,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SPACING.sm,
     marginTop: SPACING.xs,
+  },
+  deleteButton: {
+    padding: SPACING.sm,
+    minWidth: TOUCH_TARGET.minimum,
+    minHeight: TOUCH_TARGET.minimum,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  deleteButtonContainer: {
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: BORDER_RADIUS.lg,
   },
 });
