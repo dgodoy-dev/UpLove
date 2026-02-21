@@ -3,6 +3,8 @@
 UpLove is a **React Native mobile app** built with **Expo** that helps users track and improve their relationships through structured check-ins, commitments, and emotional pillars.
 
 ---
+**State:** In progress (8/10)
+---
 
 ## 📱 Overview
 
